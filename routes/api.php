@@ -11,10 +11,5 @@ Route::get('/events', [EventController::class, 'index']);
 Route::post('/registrations', [RegistrationController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
-
-    Route::get('/admin/registrations', [
-        AdminRegistrationController::class,
-        'index'
-    ]);
-
+    Route::get('/admin/registrations', [AdminRegistrationController::class, 'index']);
 });

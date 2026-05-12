@@ -8,42 +8,43 @@ use Illuminate\Http\Request;
 
 class RegistrationController extends Controller
 {
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'event_id' => 'required|exists:events,id',
-            'document' => 'required|mimes:jpg,jpeg,png,pdf'
-        ]);
 
-        $file = $request->file('document');
+public function store(Request $request)
+{
+    try {
+        $file = $request->file('document') ?? $request->files->get('document');
 
-        $extension = $file->getClientOriginalExtension();
+        if (!$file) {
+            return response()->json([
+                'error' => 'File not found'
+            ], 422);
+        }
 
-        $filename =
-            $request->email .
-            '.' .
-            $request->event_id .
-            '.' .
-            $extension;
+        $emailSafe = str_replace(['@', '.'], '_', $request->email);
 
-        $path = $file->storeAs(
-            'documents',
-            $filename,
-            'public'
-        );
+        $filename = $emailSafe . '_' . $request->event_id . '.' . $file->getClientOriginalExtension();
 
+        $path = $file->storeAs('dni', $filename, 'public');
+
+        // 🔥 THIS IS WHAT YOU WERE MISSING
         $registration = Registration::create([
             'name' => $request->name,
             'email' => $request->email,
             'event_id' => $request->event_id,
-            'document_path' => $path
+            'dni_path' => $path,
         ]);
 
         return response()->json([
-            'message' => 'Registration created',
-            'registration' => $registration
+            'ok' => true,
+            'path' => $path,
+            'db' => $registration
         ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'line' => $e->getLine()
+        ], 500);
     }
+}
 }

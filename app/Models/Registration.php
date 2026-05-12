@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Registration extends Model
 {
-    public function event()
+    protected $fillable = [
+        'name',
+        'email',
+        'event_id',
+        'document'
+    ];
+
+        public function event()
 {
     return $this->belongsTo(Event::class);
 }

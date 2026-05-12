@@ -12,6 +12,12 @@ Route::get('/register', function () {
     return Inertia::render('frontend/registre');
 });
 
+Route::get('/register/{event}', function ($event) {
+    return Inertia::render('frontend/registre', [
+        'eventId' => $event
+    ]);
+});
+
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/registrations', function () {
