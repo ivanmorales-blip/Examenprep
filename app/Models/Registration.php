@@ -10,7 +10,7 @@ class Registration extends Model
         'name',
         'email',
         'event_id',
-        'document'
+        'dni_path',
     ];
 
         public function event()

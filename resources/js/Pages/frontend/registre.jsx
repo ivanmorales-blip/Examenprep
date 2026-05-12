@@ -1,116 +1,88 @@
 import { useEffect, useState } from "react";
 
-export default function Register() {
-    const [events, setEvents] = useState([]);
+export default function AdminRegistrations() {
 
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        event_id: "",
-        document: null
-    });
+    const [registrations, setRegistrations] = useState([]);
 
     useEffect(() => {
-        fetch("/api/events")
+        fetch("/admin/registrations/data", {
+            credentials: "same-origin"
+        })
             .then(res => res.json())
-            .then(data => setEvents(data));
+            .then(setRegistrations);
     }, []);
 
-    const submit = async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData();
-
-        formData.append("name", form.name);
-        formData.append("email", form.email);
-        formData.append("event_id", form.event_id);
-
-        // 🔥 CRITICAL FIX HERE
-        if (form.document instanceof File) {
-            formData.append("document", form.document);
-        } else {
-            console.error("No valid file selected:", form.document);
-            alert("Please select a valid file");
-            return;
-        }
-
-        const res = await fetch("/api/registrations", {
+    const logout = async () => {
+        await fetch("/logout", {
             method: "POST",
-            body: formData
+            credentials: "same-origin",
+            headers: {
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    ?.getAttribute("content"),
+            }
         });
 
-        const text = await res.text();
-        console.log("RESPONSE:", text);
+        window.location.href = "/login";
     };
 
     return (
-        <div className="p-10">
-            <form onSubmit={submit} className="space-y-4">
+        <div className="p-6">
 
-                <input
-                    type="text"
-                    placeholder="Name"
-                    className="border p-2 w-full"
-                    onChange={(e) =>
-                        setForm(prev => ({
-                            ...prev,
-                            name: e.target.value
-                        }))
-                    }
-                />
+            {/* HEADER */}
+            <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center mb-6">
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    className="border p-2 w-full"
-                    onChange={(e) =>
-                        setForm(prev => ({
-                            ...prev,
-                            email: e.target.value
-                        }))
-                    }
-                />
-
-                <select
-                    className="border p-2 w-full"
-                    onChange={(e) =>
-                        setForm(prev => ({
-                            ...prev,
-                            event_id: e.target.value
-                        }))
-                    }
-                >
-                    <option value="">Select event</option>
-                    {events.map(event => (
-                        <option key={event.id} value={event.id}>
-                            {event.name}
-                        </option>
-                    ))}
-                </select>
-
-                {/* 🔥 FIXED FILE INPUT */}
-                <input
-                    type="file"
-                    accept=".jpg,.pdf"
-                    onChange={(e) => {
-                        const file = e.target.files?.[0] || null;
-
-                        console.log("Selected file:", file);
-
-                        setForm(prev => ({
-                            ...prev,
-                            document: file
-                        }));
-                    }}
-                />
+                <h1 className="text-[clamp(1.3rem,2.5vw,2rem)] font-bold">
+                    Registrations
+                </h1>
 
                 <button
-                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    onClick={logout}
+                    className="bg-red-500 text-white px-4 py-2 rounded w-fit"
                 >
-                    Send
+                    Logout
                 </button>
 
-            </form>
+            </div>
+
+            {/* GRID */}
+            <div className="
+                grid
+                gap-4
+                grid-cols-[repeat(auto-fit,minmax(260px,1fr))]
+            ">
+
+                {registrations.map(reg => (
+                    <div
+                        key={reg.id}
+                        className="border rounded p-4 flex flex-col gap-2"
+                    >
+
+                        <p className="font-semibold">
+                            {reg.name}
+                        </p>
+
+                        <p className="text-sm">
+                            {reg.email}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                            {reg.event?.name}
+                        </p>
+
+                        <a
+                            href={`/storage/${reg.dni_path}`}
+                            className="text-blue-500 underline mt-auto"
+                            target="_blank"
+                        >
+                            Open document
+                        </a>
+
+                    </div>
+                ))}
+
+            </div>
+
         </div>
     );
 }

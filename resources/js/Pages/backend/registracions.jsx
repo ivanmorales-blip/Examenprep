@@ -1,117 +1,116 @@
 import { useEffect, useState } from "react";
 
-export default function Registrations() {
+export default function Register() {
 
-    const [registrations, setRegistrations] = useState([]);
+    const [events, setEvents] = useState([]);
 
-    const [filters, setFilters] = useState({
-        event_name: "",
-        date: ""
+    const [form, setForm] = useState({
+        name: "",
+        email: "",
+        event_id: "",
+        document: null
     });
 
-    const loadData = async () => {
-
-        const params = new URLSearchParams(filters);
-
-        const response = await fetch(
-            `/api/admin/registrations?${params}`,
-            {
-                credentials: "include"
-            }
-        );
-
-        const data = await response.json();
-
-        setRegistrations(data);
-    };
-
     useEffect(() => {
-        loadData();
+        fetch("/api/events")
+            .then(res => res.json())
+            .then(setEvents);
     }, []);
 
+    const submit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("name", form.name);
+        formData.append("email", form.email);
+        formData.append("event_id", form.event_id);
+
+        if (form.document instanceof File) {
+            formData.append("document", form.document);
+        }
+
+        const res = await fetch("/api/registrations", {
+            method: "POST",
+            body: formData
+        });
+
+        console.log(await res.text());
+    };
+
     return (
-        <div className="p-10">
+        <div className="p-6 flex justify-center">
 
-            <h1 className="text-3xl font-bold mb-6">
-                Registrations
-            </h1>
-
-            <div className="flex gap-4 mb-6">
+            <form
+                onSubmit={submit}
+                className="
+                    w-full
+                    max-w-2xl
+                    grid
+                    gap-4
+                    grid-cols-[repeat(auto-fit,minmax(250px,1fr))]
+                    p-4
+                    border
+                    rounded
+                "
+            >
 
                 <input
                     type="text"
-                    placeholder="Event name"
-                    className="border p-2"
+                    placeholder="Name"
+                    className="border p-3 w-full"
                     onChange={e =>
-                        setFilters({
-                            ...filters,
-                            event_name: e.target.value
-                        })
+                        setForm(prev => ({ ...prev, name: e.target.value }))
                     }
                 />
 
                 <input
-                    type="date"
-                    className="border p-2"
+                    type="email"
+                    placeholder="Email"
+                    className="border p-3 w-full"
                     onChange={e =>
-                        setFilters({
-                            ...filters,
-                            date: e.target.value
-                        })
+                        setForm(prev => ({ ...prev, email: e.target.value }))
+                    }
+                />
+
+                <select
+                    className="border p-3 w-full col-span-full"
+                    onChange={e =>
+                        setForm(prev => ({ ...prev, event_id: e.target.value }))
+                    }
+                >
+                    <option value="">Select event</option>
+                    {events.map(e => (
+                        <option key={e.id} value={e.id}>
+                            {e.name}
+                        </option>
+                    ))}
+                </select>
+
+                <input
+                    type="file"
+                    className="col-span-full"
+                    onChange={e =>
+                        setForm(prev => ({
+                            ...prev,
+                            document: e.target.files?.[0] || null
+                        }))
                     }
                 />
 
                 <button
-                    onClick={loadData}
-                    className="bg-blue-500 text-white px-4"
+                    className="
+                        col-span-full
+                        bg-green-500
+                        text-white
+                        py-3
+                        rounded
+                        text-[clamp(1rem,2vw,1.1rem)]
+                    "
                 >
-                    Filter
+                    Send
                 </button>
 
-            </div>
-
-            <table className="w-full border">
-
-                <thead>
-                    <tr>
-                        <th>Event</th>
-                        <th>Date</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>DNI</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    {registrations.map(reg => (
-
-                        <tr key={reg.id}>
-
-                            <td>{reg.event.name}</td>
-
-                            <td>{reg.event.date}</td>
-
-                            <td>{reg.name}</td>
-
-                            <td>{reg.email}</td>
-
-                            <td>
-                                <a
-                                    href={`/storage/${reg.document_path}`}
-                                    target="_blank"
-                                >
-                                    Download
-                                </a>
-                            </td>
-
-                        </tr>
-
-                    ))}
-
-                </tbody>
-
-            </table>
+            </form>
 
         </div>
     );
