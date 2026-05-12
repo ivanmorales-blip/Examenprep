@@ -90,6 +90,15 @@ export default function Login({ status, canResetPassword }) {
                         </Link>
                     )}
 
+                    {/* REGISTER BUTTON */}
+                    <Link
+                        href={route('register')}
+                        className="ms-4 rounded-md text-sm text-blue-600 underline hover:text-blue-800"
+                    >
+                        Register
+                    </Link>
+
+
                     <PrimaryButton className="ms-4" disabled={processing}>
                         Log in
                     </PrimaryButton>
