@@ -1,87 +1,116 @@
 import { useEffect, useState } from "react";
 
-export default function AdminRegistrations() {
+export default function Register() {
 
-    const [registrations, setRegistrations] = useState([]);
+    const [events, setEvents] = useState([]);
+
+    const [form, setForm] = useState({
+        name: "",
+        email: "",
+        event_id: "",
+        document: null
+    });
 
     useEffect(() => {
-        fetch("/admin/registrations/data", {
-            credentials: "same-origin"
-        })
+        fetch("/api/events")
             .then(res => res.json())
-            .then(setRegistrations);
+            .then(setEvents);
     }, []);
 
-    const logout = async () => {
-        await fetch("/logout", {
+    const submit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("name", form.name);
+        formData.append("email", form.email);
+        formData.append("event_id", form.event_id);
+
+        if (form.document instanceof File) {
+            formData.append("document", form.document);
+        }
+
+        const res = await fetch("/api/registrations", {
             method: "POST",
-            credentials: "same-origin",
-            headers: {
-                "X-CSRF-TOKEN": document
-                    .querySelector('meta[name="csrf-token"]')
-                    ?.getAttribute("content"),
-            }
+            body: formData
         });
 
-        window.location.href = "/login";
+        console.log(await res.text());
     };
 
     return (
-        <div className="p-6">
+        <div className="p-6 flex justify-center">
 
-            {/* HEADER */}
-            <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center mb-6">
+            <form
+                onSubmit={submit}
+                className="
+                    w-full
+                    max-w-2xl
+                    grid
+                    gap-4
+                    grid-cols-[repeat(auto-fit,minmax(250px,1fr))]
+                    p-4
+                    border
+                    rounded
+                "
+            >
 
-                <h1 className="text-[clamp(1.3rem,2.5vw,2rem)] font-bold">
-                    Registrations
-                </h1>
+                <input
+                    type="text"
+                    placeholder="Name"
+                    className="border p-3 w-full"
+                    onChange={e =>
+                        setForm(prev => ({ ...prev, name: e.target.value }))
+                    }
+                />
+
+                <input
+                    type="email"
+                    placeholder="Email"
+                    className="border p-3 w-full"
+                    onChange={e =>
+                        setForm(prev => ({ ...prev, email: e.target.value }))
+                    }
+                />
+
+                <select
+                    className="border p-3 w-full col-span-full"
+                    onChange={e =>
+                        setForm(prev => ({ ...prev, event_id: e.target.value }))
+                    }
+                >
+                    <option value="">Select event</option>
+                    {events.map(e => (
+                        <option key={e.id} value={e.id}>
+                            {e.name}
+                        </option>
+                    ))}
+                </select>
+
+                <input
+                    type="file"
+                    className="col-span-full"
+                    onChange={e =>
+                        setForm(prev => ({
+                            ...prev,
+                            document: e.target.files?.[0] || null
+                        }))
+                    }
+                />
 
                 <button
-                    onClick={logout}
-                    className="bg-red-500 text-white px-4 py-2 rounded w-fit"
+                    className="
+                        col-span-full
+                        bg-green-500
+                        text-white
+                        py-3
+                        rounded
+                        text-[clamp(1rem,2vw,1.1rem)]
+                    "
                 >
-                    Logout
+                    Send
                 </button>
 
-            </div>
-
-            {/* GRID */}
-            <div className="
-                grid
-                gap-4
-                grid-cols-[repeat(auto-fit,minmax(260px,1fr))]
-            ">
-
-                {registrations.map(reg => (
-                    <div
-                        key={reg.id}
-                        className="border rounded p-4 flex flex-col gap-2"
-                    >
-
-                        <p className="font-semibold">
-                            {reg.name}
-                        </p>
-
-                        <p className="text-sm">
-                            {reg.email}
-                        </p>
-
-                        <p className="text-sm text-gray-600">
-                            {reg.event?.name}
-                        </p>
-
-                        <a
-                            href={`/storage/${reg.dni_path}`}
-                            className="text-blue-500 underline mt-auto"
-                            target="_blank"
-                        >
-                            Open document
-                        </a>
-
-                    </div>
-                ))}
-
-            </div>
+            </form>
 
         </div>
     );
