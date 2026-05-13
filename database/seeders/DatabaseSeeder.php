@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Project;
+use App\Models\Task;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -21,7 +23,27 @@ class DatabaseSeeder extends Seeder
         ]);
         User::factory()->create([
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'test@examplm.com',
+        ]);
+
+        Project::firstOrCreate([
+            'name' => 'Test',
+            'descripcio' => 'Test',
+            'fecha_inicio' => now(),
+            'fecha_fin'=> now(),
+            'user_id' => 2,
+        ]);
+
+        Task::firstOrCreate([
+            'descripcio' => 'Test',
+            'completada' => 1,
+            'project_id' => 2,
+        ]);
+
+        Task::firstOrCreate([
+            'descripcio' => 'Test',
+            'completada' => 1,
+            'project_id' => 1,
         ]);
     }
 }

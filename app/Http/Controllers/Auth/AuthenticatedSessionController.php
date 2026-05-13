@@ -33,7 +33,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/admin/registrations');
+        session(['user_id' => Auth::id()]);
+
+        return redirect()->intended('/admin/dashboard');
     }
 
     /**
@@ -42,6 +44,8 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
+
+        $request->session()->forget('user_id');
 
         $request->session()->invalidate();
 

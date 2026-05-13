@@ -1,0 +1,26 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('tasks', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('id_project');
+        $table->foreign('id_project')->references('id')->on('projects')->onDelete('cascade');
+        $table->text('descripcio');
+        $table->tinyInteger('completada', 1);
+        $table->timestamps();
+});
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('tasks');
+    }
+
+};

@@ -12,7 +12,7 @@ use App\Models\Registration;
 */
 
 Route::get('/', function () {
-    return Inertia::render('frontend/Home');
+    return Inertia::render('Auth/Login');
 });
 
 Route::get('/register', function () {
@@ -32,6 +32,10 @@ Route::get('/register/{event}', function ($event) {
 */
 
 Route::middleware(['auth'])->group(function () {
+
+        Route::get('/admin/dashboard', function () {
+        return Inertia::render('backend/dashboard');
+    });
 
     // Admin dashboard page (React/Inertia page)
     Route::get('/admin/registrations', function () {

@@ -66,41 +66,45 @@ export default function Home() {
             </div>
 
             {/* GRID */}
-            <div className="
-                grid
-                gap-4
-                grid-cols-[repeat(auto-fit,minmax(250px,1fr))]
-            ">
+            <div
+    className="
+        grid
+        gap-4
+        grid-cols-1
+        sm:grid-cols-2
+        lg:grid-cols-3
+    "
+>
 
-                {filteredEvents.map(event => (
-                    <div
-                        key={event.id}
-                        className="border rounded p-4 flex flex-col gap-2"
-                    >
+    {filteredEvents.map(event => (
+        <div
+            key={event.id}
+            className="border rounded p-4 flex flex-col gap-2"
+        >
 
-                        <h2 className="font-bold text-lg">
-                            {event.name}
-                        </h2>
+            <h2 className="font-bold text-lg">
+                {event.name}
+            </h2>
 
-                        <p className="text-sm text-gray-600">
-                            {event.date}
-                        </p>
+            <p className="text-sm text-gray-600">
+                {event.date}
+            </p>
 
-                        <p className="text-sm">
-                            {event.short_description}
-                        </p>
+            <p className="text-sm">
+                {event.short_description}
+            </p>
 
-                        <a
-                            href={`/register/${event.id}`}
-                            className="bg-blue-500 text-white px-3 py-2 rounded text-center mt-auto"
-                        >
-                            Register
-                        </a>
+            <a
+                href={`/register/${event.id}`}
+                className="bg-blue-500 text-white px-3 py-2 rounded text-center mt-auto"
+            >
+                Register
+            </a>
 
-                    </div>
-                ))}
+        </div>
+    ))}
 
-            </div>
+</div>
 
             {/* NO RESULTS */}
             {filteredEvents.length === 0 && (
