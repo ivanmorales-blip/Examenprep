@@ -4,12 +4,16 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Registration;
+use App\Http\Controllers\Api\ProjectController;
+
 
 /*
 |--------------------------------------------------------------------------
 | Public pages
 |--------------------------------------------------------------------------
 */
+
+Route::get('/projects', [ProjectController::class, 'index']);
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login');
@@ -36,6 +40,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/dashboard', function () {
         return Inertia::render('backend/dashboard');
     });
+
+            Route::get('/admin/addproject', function () {
+        return Inertia::render('backend/projecteadd');
+    });
+
+    Route::post('/projects/add', [ProjectController::class, 'store']);
+
+    Route::get('/admin/editproject/{id}', function ($id) {
+        return Inertia::render('backend/projectedit', ['projectId' => $id]);
+    });
+
 
     // Admin dashboard page (React/Inertia page)
     Route::get('/admin/registrations', function () {

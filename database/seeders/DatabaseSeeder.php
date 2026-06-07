@@ -15,35 +15,38 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
-    {
-        // User::factory(10)->create();
-        $this->call([
-            EventSeeder::class,
-        ]);
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@examplm.com',
-        ]);
+public function run(): void
+{
+    $this->call([
+        EventSeeder::class,
+    ]);
 
-        Project::firstOrCreate([
-            'name' => 'Test',
-            'descripcio' => 'Test',
-            'fecha_inicio' => now(),
-            'fecha_fin'=> now(),
-            'user_id' => 2,
-        ]);
+    // 1. Create user
+    $user = User::factory()->create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+    ]);
 
-        Task::firstOrCreate([
-            'descripcio' => 'Test',
-            'completada' => 1,
-            'project_id' => 2,
-        ]);
+    // 2. Create project linked to user
+    $project = Project::firstOrCreate([
+        'name' => 'Test',
+        'descripcio' => 'Test',
+        'fecha_inicio' => now(),
+        'fecha_fin' => now(),
+        'user_id' => $user->id,
+    ]);
 
-        Task::firstOrCreate([
-            'descripcio' => 'Test',
-            'completada' => 1,
-            'project_id' => 1,
-        ]);
-    }
+    // 3. Create tasks linked to project
+    Task::firstOrCreate([
+        'descripcio' => 'Test Task 1',
+        'completada' => 1,
+        'id_project' => $project->id,
+    ]);
+
+    Task::firstOrCreate([
+        'descripcio' => 'Test Task 2',
+        'completada' => 1,
+        'id_project' => $project->id,
+    ]);
+}
 }

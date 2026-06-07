@@ -9,6 +9,12 @@ class EventController extends Controller
 {
 public function index()
 {
-    return Event::select('id', 'name', 'date', 'short_description')->get();
+    $projectes = Auth::user()
+        ->projects()
+        ->select('id', 'name', 'descripcio')
+        ->get();
+
+    return response()->json($projectes);
 }
+
 }

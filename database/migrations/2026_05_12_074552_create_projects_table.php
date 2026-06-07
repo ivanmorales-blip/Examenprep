@@ -15,7 +15,7 @@ return new class extends Migration
     $table->text('descripcio');
 
     $table->date('fecha_inicio');
-    $table->text('fecha_fin');
+    $table->date('fecha_fin');
     $table->unsignedBigInteger('user_id');
     $table->foreign('user_id')
         ->references('id')
