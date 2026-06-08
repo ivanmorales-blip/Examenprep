@@ -11,11 +11,9 @@ export default function ProjectEdit({ projectId }) {
     });
 
     useEffect(() => {
-
         fetch(`/api/projects/${projectId}`)
             .then(res => res.json())
             .then(project => {
-
                 setForm({
                     name: project.name,
                     descripcio: project.descripcio,

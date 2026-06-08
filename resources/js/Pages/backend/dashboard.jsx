@@ -3,7 +3,6 @@ import { Link, usePage } from "@inertiajs/react";
 
 export default function Home() {
     const { auth } = usePage().props;
-
     const [projects, setProjects] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
