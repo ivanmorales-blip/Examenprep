@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Project;
+use App\Models\Missatge;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -33,5 +34,9 @@ class User extends Authenticatable
     public function projects()
 {
     return $this->hasMany(Project::class);
+}
+    public function missatges()
+{
+    return $this->hasMany(Missatge::class);
 }
 }

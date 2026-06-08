@@ -5,15 +5,13 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Registration;
 use App\Http\Controllers\Api\ProjectController;
-
-
-/*
-|--------------------------------------------------------------------------
-| Public pages
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\Api\MissatgeController;
 
 Route::get('/projects', [ProjectController::class, 'index']);
+
+        Route::get('/missatges', [MissatgeController::class, 'index']);
+
+        Route::get('/enviados', [MissatgeController::class, 'enviados']);
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login');
@@ -37,6 +35,11 @@ Route::get('/register/{event}', function ($event) {
 
 Route::middleware(['auth'])->group(function () {
 
+
+
+    Route::get('/user', [MissatgeController::class, 'user']);
+
+
         Route::get('/admin/dashboard', function () {
         return Inertia::render('backend/dashboard');
     });
@@ -45,12 +48,27 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('backend/projecteadd');
     });
 
+
+        Route::get('/admin/missatgesdesortida', function () {
+        return Inertia::render('backend/missatgesdesortida');
+    });
+
     Route::post('/projects/add', [ProjectController::class, 'store']);
 
     Route::get('/admin/editproject/{id}', function ($id) {
         return Inertia::render('backend/projectedit', ['projectId' => $id]);
     });
 
+    Route::post('/missatges/store', [MissatgeController::class, 'store']);
+
+
+    Route::get('/admin/addmissatge', function () {
+        return Inertia::render('backend/messageadd');
+    });
+
+    Route::get('/admin/addmissatge/{id}', function ($id)  {
+        return Inertia::render('backend/messageadd', ['remitente_id' => $id]);
+    });
 
     // Admin dashboard page (React/Inertia page)
     Route::get('/admin/registrations', function () {

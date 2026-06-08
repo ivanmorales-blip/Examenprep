@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\Missatge;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,7 +14,6 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Seed the application's database.
      * php artisan migrate:fresh --seed
      */
 public function run(): void
@@ -22,13 +22,30 @@ public function run(): void
         EventSeeder::class,
     ]);
 
-    // 1. Create user
+
     $user = User::factory()->create([
         'name' => 'Test User',
         'email' => 'test@example.com',
     ]);
 
-    // 2. Create project linked to user
+    $user2 = User::factory()->create([
+        'name' => 'Test User2',
+        'email' => 'test@example2.com',
+    ]);
+
+    $user3 = User::factory()->create([
+        'name' => 'Olga',
+        'email' => 'olga@olga.com',
+    ]);
+
+    Missatge::firstOrCreate([
+        'remitente_id' => $user->id,
+        'destinatario_id' => $user->id,
+        'asunto' => "Test",
+        'mensaje' => "Hola",
+        'leido' => False,
+    ]);
+
     $project = Project::firstOrCreate([
         'name' => 'Test',
         'descripcio' => 'Test',
@@ -37,7 +54,6 @@ public function run(): void
         'user_id' => $user->id,
     ]);
 
-    // 3. Create tasks linked to project
     Task::firstOrCreate([
         'descripcio' => 'Test Task 1',
         'completada' => 1,
